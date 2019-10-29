@@ -6,6 +6,7 @@ import argparse
 
 ap = argparse.ArgumentParser()
 ap.add_argument("-e", "--env", required=True,help="local or gcp env")
+ap.add_argument("-p", "--print", required=True,help="local or gcp env")
 
 args = vars(ap.parse_args())
 
@@ -14,8 +15,6 @@ if args['env'] != 'gcp':
 
 topic_name="store_events"
 project_id ="yonis-sandbox-20180926"
-
-
 
 
 batch_settings = pubsub_v1.types.BatchSettings(
@@ -30,11 +29,14 @@ topic_path = pubsub_client.topic_path(project_id, topic_name)
 while True:
     bask = basket_orders()
     basket_rows = bask.basket_orders()
+
     for r in bask.basket:
-        print r
+
+        if args['print'] == "print":
+            print r
         message_future = pubsub_client.publish(topic_path,data=r.encode('utf-8'))
-    #msg_future = pubsub_v1.publisher.Client.publish("projects/yonis-sandbox-20180926/topics/store_events", data=r.encode('utf-8'))
-    #message_future = pubsub_v1.publisher.Client.publish() pubsub_client.publish(topic_path, data=r.encode('utf-8'))
+
+    print ('sent {} items'.format(bask.qty))
 
     def callback(message_future):
         if message_future.exception(timeout=3):

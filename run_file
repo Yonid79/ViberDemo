@@ -1,0 +1,5 @@
+-- Run
+nohup python -u run_data.py --env gcp --print none> log_#.txt 2>&1 &
+
+-- stop
+ps -ef | grep python
